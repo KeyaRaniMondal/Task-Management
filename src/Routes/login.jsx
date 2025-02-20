@@ -1,10 +1,12 @@
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { useContext, useState } from "react";
 import { AuthContext } from "../Providers/AuthProvider";
+import {useNavigate } from "react-router-dom";
 
 const Login = () => {
     const provider = new GoogleAuthProvider();
     const { setUser } = useContext(AuthContext); 
+    const navigate=useNavigate()
     
     const [error, setError] = useState({});
 
@@ -33,6 +35,7 @@ const Login = () => {
             
             if (response.ok) {
                 alert("User registered successfully");
+                navigate('/home')
             } else {
                 alert("Failed to save to database");
                 console.error("Database Error:", mongodbResult);
