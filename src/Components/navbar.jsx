@@ -20,7 +20,7 @@ function NavBar() {
  
 
   return (
-    <AppBar position="static" className='w-[1000px]'>
+    <AppBar position="static" className='w-full m-0 p-0'>
       <Container className='w-full '>
         <Toolbar disableGutters>
           <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />

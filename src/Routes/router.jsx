@@ -8,11 +8,14 @@ import TaskBoard from '../Pages/Tasks/showTask';
 const Router = () => {
   return (
     <Routes>
-        <Route index element={<MainLayout/>}></Route>
-      <Route path="/login" element={<Login />} />
-      <Route path="/home" element={<Home />} />
+      <Route path='/' element={<MainLayout/>}>
+      <Route index element={<Home />} />
+      <Route path="/home" element={<Home />} />     
+      <Route path="/login" element={<Login />} />      
       <Route path="/addTask" element={<AddTask></AddTask>} />
       <Route path="/showTask" element={<TaskBoard></TaskBoard>} />
+      </Route>
+       
     </Routes>
   );
 };
