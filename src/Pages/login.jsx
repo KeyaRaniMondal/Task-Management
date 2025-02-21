@@ -23,7 +23,7 @@ const Login = () => {
             };
 
             //For Sending data to the backend
-            const response = await fetch("http://localhost:5000/users", {
+            const response = await fetch("https://task-management-backend-xi.vercel.app/users", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

@@ -1,5 +1,6 @@
 import { DragDropContext, Draggable, Droppable } from '@hello-pangea/dnd';
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 
 const Home = () => {
@@ -40,7 +41,8 @@ const Home = () => {
     };
 
     return (
-        <DragDropContext onDragEnd={onDragEnd}>
+        <div>
+          <DragDropContext onDragEnd={onDragEnd}>
             <div className="flex justify-around">
                 {Object.entries(columns).map(([columnId, tasks]) => (
                     <Droppable key={columnId} droppableId={columnId}>
@@ -79,6 +81,11 @@ const Home = () => {
                 ))}
             </div>
         </DragDropContext>
+        <Link to={'/addTask'}>
+        <button className="btn btn-outline btn-info">Add Task</button>
+        </Link>  
+        </div>
+
     );
 };
 
