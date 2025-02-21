@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const AddTask = () => {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [category, setCategory] = useState("To-Do");
+    const navigate = useNavigate()
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -25,6 +27,7 @@ const AddTask = () => {
             const response = await axios.post("https://task-management-backend-xi.vercel.app/tasks", newTask);
             if (response.data.insertedId) {
                 alert("Task added successfully!");
+                navigate('/home')
                 setTitle("");
                 setDescription("");
                 setCategory("To-Do");
