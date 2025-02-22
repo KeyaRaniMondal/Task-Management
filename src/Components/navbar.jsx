@@ -12,8 +12,17 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
+import Login from '../Pages/login';
+import { NavLink } from 'react-router-dom';
 
-const pages = ['Products', 'Pricing', 'Blog'];
+const pages =(
+  <>
+  <NavLink to={'/home'}>Home</NavLink>
+  <NavLink to={'/addTask'}>Add Task</NavLink>
+  <NavLink to={'/showTask'}>Show Task</NavLink>
+  </>
+  
+)
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 function NavBar() {
@@ -39,7 +48,7 @@ function NavBar() {
               textDecoration: 'none',
             }}
           >
-            LOGO
+              Taskify
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
@@ -69,11 +78,9 @@ function NavBar() {
              
               sx={{ display: { xs: 'block', md: 'none' } }}
             >
-              {pages.map((page) => (
-                <MenuItem key={page} >
-                  <Typography sx={{ textAlign: 'center' }}>{page}</Typography>
+                <MenuItem sx={{ display: 'flex', gap: '20px' }}>
+                  <Typography className='mr-5'>{pages}</Typography>
                 </MenuItem>
-              ))}
             </Menu>
           </Box>
           <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
@@ -93,25 +100,17 @@ function NavBar() {
               textDecoration: 'none',
             }}
           >
-            LOGO
+            Taskify
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            {pages.map((page) => (
               <Button
-                key={page}
                 
                 sx={{ my: 2, color: 'white', display: 'block' }}
               >
-                {page}
+                {pages}
               </Button>
-            ))}
           </Box>
           <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open settings">
-              <IconButton  sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
-              </IconButton>
-            </Tooltip>
             <Menu
               sx={{ mt: '45px' }}
               id="menu-appbar"
@@ -134,6 +133,7 @@ function NavBar() {
               ))}
             </Menu>
           </Box>
+          <Login></Login>
         </Toolbar>
       </Container>
     </AppBar>
