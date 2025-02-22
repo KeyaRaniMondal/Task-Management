@@ -39,8 +39,8 @@ const AddTask = () => {
     };
 
     return (
-        <div className="flex flex-col gap-5">
-            <h2 className="text-3xl">Add Task</h2>
+        <div className="flex flex-col gap-5 mt-10">
+            <h2 className="text-3xl text-center font-bold">Add Task</h2>
             <div className="text-center">
                 <span>Task Title</span>
                 <br />
@@ -65,7 +65,7 @@ const AddTask = () => {
                     maxLength={200}
                 ></textarea>
             </div>
-            <div className="dropdown dropdown-center dropdown-down">
+            <div className="dropdown dropdown-center dropdown-down flex justify-center mx-auto">
                 <div tabIndex={0} role="button" className="btn m-1">
                     Select Task Category ➡️
                 </div>
@@ -84,7 +84,7 @@ const AddTask = () => {
                     </li>
                 </ul>
             </div>
-            <div>
+            <div className="flex justify-center mx-auto">
                 <button className="btn btn-info" onClick={handleSubmit}>
                     Add Task
                 </button>

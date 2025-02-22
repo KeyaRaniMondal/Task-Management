@@ -1,25 +1,45 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createContext } from "react";
 import { auth } from "../Firebase/firebase.config";
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 
 export const AuthContext = createContext(null)
 
 const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null)
+    const [user, setUser] = useState(null);
 
-    const CreateUser = async (email, password, name, photoURL) => {
-        const result = await createUserWithEmailAndPassword(auth, email, password)
-        await updateProfile(result.user, { displayName: name, photoURL })
-        setUser(result.user)
-        return result
-    }
-
+    useEffect(() => {
+      const auth = getAuth();
+      const unsubscribe = onAuthStateChanged(auth, (user) => {
+        if (user) {
+          setUser(user);
+          localStorage.setItem('user', JSON.stringify(user));
+        } else {
+          setUser(null);
+          localStorage.removeItem('user');
+        }
+      });
+  
+      return () => unsubscribe(); // Cleanup subscription
+    }, []);
+  
+    const login = (userData) => {
+      setUser(userData);
+      localStorage.setItem('user', JSON.stringify(userData));
+    };
+  
+    const logout = () => {
+      setUser(null);
+      localStorage.removeItem('user');
+    };     
+        
     const userInfo = {
         user,
-        CreateUser,
         updateProfile,
-        setUser
+        setUser,
+        login,
+        logout
     }
 
     return (
@@ -27,3 +47,5 @@ const AuthProvider = ({ children }) => {
     )
 }
 export default AuthProvider
+
+

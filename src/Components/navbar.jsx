@@ -13,24 +13,41 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import Login from '../Pages/login';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { AuthContext } from '../Providers/AuthProvider';
 
-const pages =(
+const pages = (
   <>
-  <NavLink to={'/home'}>Home</NavLink>
-  <NavLink to={'/addTask'}>Add Task</NavLink>
-  <NavLink to={'/showTask'}>Show Task</NavLink>
+    <NavLink to={'/home'}>Home</NavLink>
+    <NavLink to={'/addTask'}>Add Task</NavLink>
+    <NavLink to={'/showTask'}>Show Task</NavLink>
   </>
-  
-)
+);
+
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
-function NavBar() {
- 
+const NavBar=()=> {
+  const { user, logout } = React.useContext(AuthContext); 
+  const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const navigate=useNavigate()
+
+  const handleOpenUserMenu = (event) => {
+    setAnchorElUser(event.currentTarget);
+  };
+
+  const handleCloseUserMenu = () => {
+    setAnchorElUser(null);
+  };
+
+  const handleLogout = () => {
+    logout(); 
+    handleCloseUserMenu(); 
+navigate('/home')
+  };
 
   return (
-    <AppBar position="static" className='w-full m-0 p-0'>
-      <Container className='w-full '>
+    <AppBar position="static" className="w-full m-0 p-0">
+      <Container className="w-full">
         <Toolbar disableGutters>
           <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
           <Typography
@@ -48,7 +65,7 @@ function NavBar() {
               textDecoration: 'none',
             }}
           >
-              Taskify
+            Taskify
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
@@ -57,14 +74,12 @@ function NavBar() {
               aria-label="account of current user"
               aria-controls="menu-appbar"
               aria-haspopup="true"
-              
               color="inherit"
             >
               <MenuIcon />
             </IconButton>
             <Menu
               id="menu-appbar"
-            
               anchorOrigin={{
                 vertical: 'bottom',
                 horizontal: 'left',
@@ -74,13 +89,11 @@ function NavBar() {
                 vertical: 'top',
                 horizontal: 'left',
               }}
-              
-             
               sx={{ display: { xs: 'block', md: 'none' } }}
             >
-                <MenuItem sx={{ display: 'flex', gap: '20px' }}>
-                  <Typography className='mr-5'>{pages}</Typography>
-                </MenuItem>
+              <MenuItem sx={{ display: 'flex', gap: '20px' }}>
+                <Typography className="mr-5">{pages}</Typography>
+              </MenuItem>
             </Menu>
           </Box>
           <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
@@ -103,40 +116,50 @@ function NavBar() {
             Taskify
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-              <Button
-                
-                sx={{ my: 2, color: 'white', display: 'block' }}
+            <Button sx={{ my: 2, color: 'white', display: 'block' }}>{pages}</Button>
+          </Box>
+
+          {/* User Dropdown Menu */}
+          {user ? (
+            <Box sx={{ flexGrow: 0 }}>
+              <Tooltip>
+                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                  <Avatar alt={user.displayName} src={user.photoURL} />
+                </IconButton>
+              </Tooltip>
+              <Menu
+                sx={{ mt: '45px' }}
+                id="menu-appbar"
+                anchorEl={anchorElUser}
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                open={Boolean(anchorElUser)}
+                onClose={handleCloseUserMenu}
               >
-                {pages}
-              </Button>
-          </Box>
-          <Box sx={{ flexGrow: 0 }}>
-            <Menu
-              sx={{ mt: '45px' }}
-              id="menu-appbar"
-              
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              
-            >
-              {settings.map((setting) => (
-                <MenuItem key={setting} >
-                  <Typography sx={{ textAlign: 'center' }}>{setting}</Typography>
-                </MenuItem>
-              ))}
-            </Menu>
-          </Box>
-          <Login></Login>
+                {settings.map((setting) => (
+                  <MenuItem
+                    key={setting}
+                    onClick={setting === 'Logout' ? handleLogout : handleCloseUserMenu}
+                  >
+                    <Typography textAlign="center">{setting}</Typography>
+                  </MenuItem>
+                ))}
+              </Menu>
+            </Box>
+          ) : (
+            <Login />
+          )}
         </Toolbar>
       </Container>
     </AppBar>
   );
 }
+
 export default NavBar;
