@@ -1,13 +1,13 @@
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { useContext, useState } from "react";
 import { AuthContext } from "../Providers/AuthProvider";
-import {useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
     const provider = new GoogleAuthProvider();
-    const { setUser } = useContext(AuthContext); 
-    const navigate=useNavigate()
-    
+    const { setUser } = useContext(AuthContext);
+    const navigate = useNavigate()
+
     const [error, setError] = useState({});
 
     const handleGoogleSignIn = async () => {
@@ -32,13 +32,10 @@ const Login = () => {
             });
 
             const mongodbResult = await response.json();
-            
+
             if (response.ok) {
                 alert("User registered successfully");
-                navigate('/home')
-            } else {
-                alert("Failed to save to database");
-                console.error("Database Error:", mongodbResult);
+                navigate('/showTask')
             }
         } catch (error) {
             console.error("Google Sign-In Error:", error);

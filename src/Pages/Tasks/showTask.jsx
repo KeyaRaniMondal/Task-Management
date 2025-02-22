@@ -1,11 +1,13 @@
 import { DragDropContext, Draggable, Droppable } from '@hello-pangea/dnd';
 import { Link } from 'react-router-dom';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import DeleteForeverRoundedIcon from '@mui/icons-material/DeleteForeverRounded';
 import Swal from 'sweetalert2';
+import { AuthContext } from '../../Providers/AuthProvider';
 
 const TaskBoard = () => {
+  const { user } = useContext(AuthContext)
   const [tasks, setTasks] = useState({
     'To-Do': [],
     'In Progress': [],
@@ -17,10 +19,13 @@ const TaskBoard = () => {
   }, []);
 
   const fetchTasks = async () => {
-    try {
-      const response = await axios.get('https://task-management-backend-xi.vercel.app/tasks');
-      const fetchedTasks = response.data;
+    if (!user) return;
 
+    try {
+      const response = await axios.get('https://task-management-backend-xi.vercel.app/tasks', {
+        params: { email: user.email },
+      });
+      const fetchedTasks = response.data;
       const categorizedTasks = {
         'To-Do': fetchedTasks.filter((task) => task.category === 'To-Do'),
         'In Progress': fetchedTasks.filter((task) => task.category === 'In Progress'),
@@ -28,6 +33,7 @@ const TaskBoard = () => {
       };
 
       setTasks(categorizedTasks);
+      console.log(categorizedTasks);
     } catch (error) {
       console.error('Error fetching tasks:', error);
     }
@@ -70,7 +76,7 @@ const TaskBoard = () => {
         [destination.droppableId]: finishTasks,
       });
 
-      // Update the task's category in the database
+      // Update the task's category in database
       try {
         await axios.put(`https://task-management-backend-xi.vercel.app/tasks/${draggableId}`, {
           category: destination.droppableId,

@@ -1,18 +1,28 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../../Providers/AuthProvider";
 
 const AddTask = () => {
+    const { user } = useContext(AuthContext);
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [category, setCategory] = useState("To-Do");
-    const navigate = useNavigate()
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        // Form validation
         if (!title) {
-            alert("Title is required!");
+            setError("Title is required!");
+            return;
+        }
+
+        if (!user) {
+            setError("You must be logged in to add a task.");
             return;
         }
 
@@ -21,26 +31,37 @@ const AddTask = () => {
             description,
             category,
             timestamp: new Date().toISOString(),
+            email: user.email,
         };
 
+        setLoading(true);
+        setError("");
+
         try {
-            const response = await axios.post("https://task-management-backend-xi.vercel.app/tasks", newTask);
-            if (response.data.insertedId) {
+            const response = await axios.post(
+                "https://task-management-backend-xi.vercel.app/tasks",
+                newTask
+            );
+
+            if (response.status === 201) {
                 alert("Task added successfully!");
-                navigate('/home')
+                navigate("/showTask");
                 setTitle("");
                 setDescription("");
                 setCategory("To-Do");
             }
         } catch (error) {
             console.error("Error adding task:", error);
-            alert("Failed to add task. Please try again.");
+            setError("Failed to add task. Please try again.");
+        } finally {
+            setLoading(false);
         }
     };
 
     return (
         <div className="flex flex-col gap-5 mt-10">
             <h2 className="text-3xl text-center font-bold">Add Task</h2>
+            {error && <p className="text-red-500 text-center">{error}</p>}
             <div className="text-center">
                 <span>Task Title</span>
                 <br />
@@ -54,6 +75,8 @@ const AddTask = () => {
                     required
                 />
             </div>
+
+            {/* Task Description */}
             <div className="text-center">
                 <span>Task Description</span>
                 <br />
@@ -65,6 +88,8 @@ const AddTask = () => {
                     maxLength={200}
                 ></textarea>
             </div>
+
+            {/* Task Category*/}
             <div className="dropdown dropdown-center dropdown-down flex justify-center mx-auto">
                 <div tabIndex={0} role="button" className="btn m-1">
                     Select Task Category ➡️
@@ -84,9 +109,15 @@ const AddTask = () => {
                     </li>
                 </ul>
             </div>
+
+            {/* Add Task Button */}
             <div className="flex justify-center mx-auto">
-                <button className="btn btn-info" onClick={handleSubmit}>
-                    Add Task
+                <button
+                    className="btn btn-info"
+                    onClick={handleSubmit}
+                    disabled={loading}
+                >
+                    {loading ? "Adding Task..." : "Add Task"}
                 </button>
             </div>
         </div>

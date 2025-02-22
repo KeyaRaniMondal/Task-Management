@@ -26,10 +26,10 @@ const pages = (
 
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
-const NavBar=()=> {
-  const { user, logout } = React.useContext(AuthContext); 
+const NavBar = () => {
+  const { user, logout } = React.useContext(AuthContext);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
-  const navigate=useNavigate()
+  const navigate = useNavigate()
 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
@@ -40,9 +40,9 @@ const NavBar=()=> {
   };
 
   const handleLogout = () => {
-    logout(); 
-    handleCloseUserMenu(); 
-navigate('/home')
+    logout();
+    handleCloseUserMenu();
+    navigate('/home')
   };
 
   return (
