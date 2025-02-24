@@ -1,13 +1,17 @@
+import * as React from 'react';
 import { DragDropContext, Draggable, Droppable } from '@hello-pangea/dnd';
 import { Link } from 'react-router-dom';
-import React, { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import DeleteForeverRoundedIcon from '@mui/icons-material/DeleteForeverRounded';
 import Swal from 'sweetalert2';
 import { AuthContext } from '../../Providers/AuthProvider';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Typography from '@mui/material/Typography';
 
 const TaskBoard = () => {
-  const { user } = useContext(AuthContext)
+  const { user } = useContext(AuthContext);
   const [tasks, setTasks] = useState({
     'To-Do': [],
     'In Progress': [],
@@ -16,7 +20,7 @@ const TaskBoard = () => {
 
   useEffect(() => {
     fetchTasks();
-  }, []);
+  }, [user]);
 
   const fetchTasks = async () => {
     if (!user) return;
@@ -26,14 +30,25 @@ const TaskBoard = () => {
         params: { email: user.email },
       });
       const fetchedTasks = response.data;
+
+      // Categorize tasks based on due time
+      const now = new Date();
       const categorizedTasks = {
-        'To-Do': fetchedTasks.filter((task) => task.category === 'To-Do'),
-        'In Progress': fetchedTasks.filter((task) => task.category === 'In Progress'),
-        Done: fetchedTasks.filter((task) => task.category === 'Done'),
+        'To-Do': fetchedTasks.filter((task) => {
+          const dueDate = new Date(task.dueDate);
+          return dueDate > now;
+        }),
+        'In Progress': fetchedTasks.filter((task) => {
+          const dueDate = new Date(task.dueDate);
+          return dueDate <= now && dueDate >= new Date(now.getTime() - 24 * 60 * 60 * 1000);
+        }),
+        Done: fetchedTasks.filter((task) => {
+          const dueDate = new Date(task.dueDate);
+          return dueDate < new Date(now.getTime() - 24 * 60 * 60 * 1000);
+        }),
       };
 
       setTasks(categorizedTasks);
-      console.log(categorizedTasks);
     } catch (error) {
       console.error('Error fetching tasks:', error);
     }
@@ -126,7 +141,7 @@ const TaskBoard = () => {
 
   return (
     <div className="mt-20">
-      <h2 className="text-3xl font-bold mb-10 text-center">Tasks</h2>
+      <h2 className="text-3xl font-bold mb-10 text-center">Scheduled Tasks</h2>
       <DragDropContext onDragEnd={onDragEnd}>
         <div className="flex gap-5">
           {Object.keys(tasks).map((columnId) => (
@@ -135,29 +150,37 @@ const TaskBoard = () => {
                 <div
                   ref={provided.innerRef}
                   {...provided.droppableProps}
-                  className="flex-1 bg-gray-100 p-4 rounded-lg"
+                  className="flex-1 p-4 rounded-lg mx-5 text-center"
+                  style={{ alignItems: 'center', color: 'blue' }}
                 >
                   <h2 className="text-2xl font-bold mb-4">{columnId}</h2>
                   {tasks[columnId].map((task, index) => (
                     <Draggable key={task._id} draggableId={task._id} index={index}>
                       {(provided) => (
-                        <div
+                        <Card
                           ref={provided.innerRef}
                           {...provided.draggableProps}
                           {...provided.dragHandleProps}
-                          className="bg-white p-4 mb-4 rounded-lg shadow-sm"
+                          className="mb-4"
                         >
-                          <div className="flex justify-between">
-                            <h3 className="font-bold">{task.title}</h3>
-                            {/* Delete button */}
-                            <DeleteForeverRoundedIcon
-                              onClick={() => handleDelete(task._id)}
-                              style={{ cursor: 'pointer', color: 'red' }}
-                            />
-                          </div>
-                          <p>{task.description}</p>
-                          <small>{new Date(task.timestamp).toLocaleString()}</small>
-                        </div>
+                          <CardContent>
+                            <div className="flex justify-between text-left">
+                              <Typography variant="h6" component="div">
+                                {task.title}
+                              </Typography>
+                              <DeleteForeverRoundedIcon
+                                onClick={() => handleDelete(task._id)}
+                                style={{ cursor: 'pointer', color: 'red' }}
+                              />
+                            </div>
+                            <Typography variant="body2" color="text.secondary">
+                              {task.description}
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary">
+                              <small>Due: {new Date(task.dueDate).toLocaleString()}</small>
+                            </Typography>
+                          </CardContent>
+                        </Card>
                       )}
                     </Draggable>
                   ))}

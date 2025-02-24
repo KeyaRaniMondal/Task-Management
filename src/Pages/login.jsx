@@ -56,7 +56,7 @@ const Login = () => {
                         <path fill="#ea4335" d="m153 219c22-69 116-109 179-50l55-54c-78-75-230-72-297 55"></path>
                     </g>
                 </svg>
-                Login with Google
+                <h2 className="text-xsm -ml-1 md:text-md md:ml-0">Login with Google</h2>
             </button>
         </div>
     );

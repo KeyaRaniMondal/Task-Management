@@ -20,9 +20,9 @@ const Home = () => {
                <div className="text-center">
                     <h2 className="text-2xl font-bold ">Task Management Website</h2>
                </div>
-               <div className=' w-[1000px]'>
+               <div className=' lg:w-[1000px]'>
                     <DotLottieReact
-                         src={'Animation - 1740044798781.json'}
+                         src={'Animation - 1740404681916.lottie'}
                          loop
                          autoplay
                     />
