@@ -9,6 +9,9 @@ import { AuthContext } from '../../Providers/AuthProvider';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
+import { RiTornadoFill } from 'react-icons/ri';
+import { FcProcess } from 'react-icons/fc';
+import { IoCheckmarkDoneCircle } from 'react-icons/io5';
 
 const TaskBoard = () => {
   const { user } = useContext(AuthContext);
@@ -18,8 +21,19 @@ const TaskBoard = () => {
     Done: [],
   });
 
+  const taskIcons = {
+    'To-Do': <RiTornadoFill />,
+    'In Progress': <FcProcess />,
+    Done: <IoCheckmarkDoneCircle />,
+  };
+
   useEffect(() => {
     fetchTasks();
+    const interval = setInterval(() => {
+      fetchTasks();
+    }, 2000); // Fetch every 2 seconds
+
+    return () => clearInterval(interval);
   }, [user]);
 
   const fetchTasks = async () => {
@@ -91,7 +105,7 @@ const TaskBoard = () => {
         [destination.droppableId]: finishTasks,
       });
 
-      // Update the task's category in database
+      // Update the task's category in the database
       try {
         await axios.put(`https://task-management-backend-xi.vercel.app/tasks/${draggableId}`, {
           category: destination.droppableId,
@@ -126,7 +140,7 @@ const TaskBoard = () => {
         await axios.delete(`https://task-management-backend-xi.vercel.app/tasks/${taskId}`);
         Swal.fire('Deleted!', 'Your task has been deleted.', 'success');
 
-        // Update Tasks after deletion
+        // Update tasks after deletion
         const updatedTasks = { ...tasks };
         for (const column in updatedTasks) {
           updatedTasks[column] = updatedTasks[column].filter((task) => task._id !== taskId);
@@ -143,17 +157,19 @@ const TaskBoard = () => {
     <div className="mt-20">
       <h2 className="text-3xl font-bold mb-10 text-center">Scheduled Tasks</h2>
       <DragDropContext onDragEnd={onDragEnd}>
-        <div className="flex gap-5">
+        <div className="md:flex gap-5">
           {Object.keys(tasks).map((columnId) => (
             <Droppable droppableId={columnId} key={columnId}>
               {(provided) => (
                 <div
                   ref={provided.innerRef}
                   {...provided.droppableProps}
-                  className="flex-1 p-4 rounded-lg mx-5 text-center"
+                  className="flex-1 p-4 rounded-lg mx-5 text-center bg-[black]"
                   style={{ alignItems: 'center', color: 'blue' }}
                 >
-                  <h2 className="text-2xl font-bold mb-4">{columnId}</h2>
+                  <h2 className="text-2xl font-bold mb-4">
+                    {taskIcons[columnId]} {columnId}
+                  </h2>
                   {tasks[columnId].map((task, index) => (
                     <Draggable key={task._id} draggableId={task._id} index={index}>
                       {(provided) => (

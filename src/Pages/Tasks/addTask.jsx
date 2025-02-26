@@ -2,6 +2,7 @@ import React, { useContext, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../Providers/AuthProvider";
+import { Bounce, toast, ToastContainer } from "react-toastify";
 
 const AddTask = () => {
   const { user } = useContext(AuthContext);
@@ -51,7 +52,19 @@ const AddTask = () => {
       );
 
       if (response.status === 201) {
-        alert("Task added successfully!");
+
+        toast.success('Task added successfully!', {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+          transition: Bounce,
+        });
+
         navigate("/showTask");
         setTitle("");
         setDescription("");
@@ -138,8 +151,22 @@ const AddTask = () => {
                 onClick={handleSubmit}
                 disabled={loading}
               >
-                {loading ? "Adding Task..." : "Add Task"}
+                {loading ? 'Adding Task...' : 'Add Task'}
               </button>
+
+              <ToastContainer
+                position="top-center"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick={false}
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="dark"
+                transition={Bounce}
+              />
             </fieldset>
           </div>
         </div>
